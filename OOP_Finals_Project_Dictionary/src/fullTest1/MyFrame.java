@@ -60,9 +60,9 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
         sp1 = new JPanel();
         sp2 = new JPanel();
 
-        b1 = new JButton(scaledLikedIcon);
-        b2 = new JButton(scaledSearchIcon);
-        b3 = new JButton(scaledSwitchIcon);
+        b1 = new JButton("📑");
+        b2 = new JButton("🔎");
+        b3 = new JButton("🔁");
 
         tf1 = new JTextField();
 
@@ -101,8 +101,12 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
         l2.setHorizontalAlignment(JLabel.CENTER);
         tf1.setFont(new Font("", Font.PLAIN, 20));
 
-        l1.setFont(new Font("Bodoni MT Black", Font.PLAIN, 40));
-        l2.setFont(new Font("Bodoni MT Black", Font.PLAIN, 40));
+        l1.setFont(new Font("", Font.PLAIN, 40));
+        l2.setFont(new Font("", Font.PLAIN, 40));
+        b1.setFont(new Font("", Font.PLAIN, 16));
+        b2.setFont(new Font("", Font.PLAIN, 16));
+        b3.setFont(new Font("", Font.PLAIN, 40));
+
 
         sp1.add(b1);
         sp1.add(tf1);
@@ -207,19 +211,22 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
         return pattern.matcher(normalized).replaceAll(""); //remove all accent marks in input
     }
     
+    //Pattern.complie to make regex
+    //"\\p{InCombiningDiacriticalMarks" to choose only accent marks
+    
     public void button3() { //change translation mode (eng to vie/ vie to eng) 
     	if (l1.getText().equals("VIE")) {
             mode = 2;
             l1.setText("ENG");
             l2.setText("VIE");
-            l1.setFont(new Font("Bodoni MT Black", Font.PLAIN, 40));
-            l2.setFont(new Font("Bodoni MT Black", Font.PLAIN, 40));
+            l1.setFont(new Font("", Font.PLAIN, 40));
+            l2.setFont(new Font("", Font.PLAIN, 40));
         } else if (l1.getText().equals("ENG")) {
             mode = 1;
             l1.setText("VIE");
             l2.setText("ENG");
-            l1.setFont(new Font("Bodoni MT Black", Font.PLAIN, 40));
-            l2.setFont(new Font("Bodoni MT Black", Font.PLAIN, 40));
+            l1.setFont(new Font("", Font.PLAIN, 40));
+            l2.setFont(new Font("", Font.PLAIN, 40));
         }
     }
     
