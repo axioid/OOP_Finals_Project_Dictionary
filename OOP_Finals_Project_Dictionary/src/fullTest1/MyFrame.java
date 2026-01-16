@@ -363,18 +363,17 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
         	        detail.add(dp1);
         	        detail.add(dp2);
         	        
-        	        int wordFontSize = 40;
-        	        int defFontSize = 20;
-        	        if(word.getText().length() > 8) {
-        	        	wordFontSize = wordFontSize - ( 3 * word.getText().length() - 8);
-        	        }
-        	        if(def.getText().length() > 30) {
-        	        	defFontSize = defFontSize - ( 3 * def.getText().length() - 8);
-        	        }
+        	        int wordLength = word.getText().length();
+        	        int defLength = def.getText().length();
+
+        	        int wordFontSize = Math.max(20, 40 - (wordLength - 8)); // shrink slowly, min 20
+        	        int defFontSize  = Math.max(12, 20 - (defLength - 30)/5); // shrink slowly, min 12
+
+
         	        
         	        pronunciation1.setFont(new Font("", Font.PLAIN, 20));
         	        pronunciation2.setFont(new Font("", Font.PLAIN, 20));
-        	        def.setFont(new Font("", Font.PLAIN, 20));
+        	        def.setFont(new Font("", Font.PLAIN, defFontSize));
         	        word.setFont(new Font("", Font.PLAIN, wordFontSize));
         	        tb1.setFont(new Font("", Font.PLAIN, 50));
 
@@ -548,18 +547,17 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
         	        detail.add(dp2);
         	        
         	        
-        	        int wordFontSize = 40;
-        	        int defFontSize = 20;
-        	        if(word.getText().length() > 8) {
-        	        	wordFontSize = wordFontSize - ( 3 * word.getText().length() - 8);
-        	        }
-        	        if(def.getText().length() > 30) {
-        	        	defFontSize = defFontSize - ( 3 * def.getText().length() - 8);
-        	        }
+        	        int wordLength = word.getText().length();
+        	        int defLength = def.getText().length();
+
+        	        int wordFontSize = Math.max(20, 40 - (wordLength - 8)); // shrink slowly, min 20
+        	        int defFontSize  = Math.max(12, 20 - (defLength - 30)/5); // shrink gently, min 12
+
+
         	        
         	        pronunciation1.setFont(new Font("", Font.PLAIN, 20));
         	        pronunciation2.setFont(new Font("", Font.PLAIN, 20));
-        	        def.setFont(new Font("", Font.PLAIN, 20));
+        	        def.setFont(new Font("", Font.PLAIN, defFontSize));
         	        word.setFont(new Font("", Font.PLAIN, wordFontSize));
         	        tb1.setFont(new Font("", Font.PLAIN, 50));
         	        
