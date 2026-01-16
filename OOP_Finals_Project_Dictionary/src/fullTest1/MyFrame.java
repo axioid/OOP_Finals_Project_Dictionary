@@ -20,7 +20,6 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
     JTextField tf1;
     JLabel l1, l2;
     JScrollPane scrollPane;
-    ImageIcon vie, eng, liked, search, switchLang;
     int mode = 1; //1-> vieToEng    2-> engToVie
 
     Database_Manager dbm = new Database_Manager();
@@ -30,30 +29,6 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
     JList<String> suggestionList = new JList<>(model);
 
     MyFrame() throws SQLException {
-//    	vie = new ImageIcon("viePlaceHolder2.png");
-//        eng = new ImageIcon("engPlaceHolder2.png");
-        liked = new ImageIcon("likedWordsButtonPlaceHolder.png");
-        search = new ImageIcon("searchButtonPlaceHolder.png");
-        switchLang = new ImageIcon("switchLanguagePlaceHolder.png");
-        
-//        Image vieImg = vie.getImage();
-//        Image engImg = eng.getImage();
-        Image likedImg = liked.getImage();
-        Image searchImg = search.getImage();
-        Image switchImg = switchLang.getImage();
-
-//        Image scaledVie = vieImg.getScaledInstance(112, 60, Image.SCALE_SMOOTH);
-//        Image scaledEng = engImg.getScaledInstance(112, 60, Image.SCALE_SMOOTH);
-        Image scaledLiked = likedImg.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-        Image scaledSearch = searchImg.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-        Image scaledSwitch = switchImg.getScaledInstance(112, 60, Image.SCALE_SMOOTH);
-
-//        ImageIcon scaledVieIcon = new ImageIcon(scaledVie);
-//        ImageIcon scaledEngIcon = new ImageIcon(scaledEng);
-        ImageIcon scaledLikedIcon = new ImageIcon(scaledLiked);
-        ImageIcon scaledSearchIcon = new ImageIcon(scaledSearch);
-        ImageIcon scaledSwitchIcon = new ImageIcon(scaledSwitch);
-
         
         p1 = new JPanel();
         p2 = new JPanel();
@@ -62,7 +37,7 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 
         b1 = new JButton("📑");
         b2 = new JButton("🔎");
-        b3 = new JButton("🔁");
+        b3 = new JButton("⮕");
 
         tf1 = new JTextField();
 
@@ -319,11 +294,13 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
         	    panel.addActionListener(_ -> {
         	        JFrame detail = new JFrame();
         	        detail.setSize(500,200);
+        	        detail.setTitle("Word Details");
         	        detail.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         	        detail.setVisible(true);
         	        detail.setLocationRelativeTo(this);
+        	        detail.setResizable(false);
         	        
-        	        JToggleButton tb1 = new JToggleButton("like");
+        	        JToggleButton tb1 = new JToggleButton();
         	        JLabel word = new JLabel();
         	        word.setHorizontalAlignment(SwingConstants.CENTER);
         	        word.setVerticalAlignment(SwingConstants.CENTER);
@@ -338,11 +315,14 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
         	        dsp1 = new JPanel();
         	        
         	        tb1.setFocusable(false);
+        	        tb1.setFont(new Font("", Font.PLAIN, 50));
         	        
         	        if(Favorite_word_manager.checkFavWordExist(resultWord.getText(), definition[0])) {
             	        tb1.setSelected(true);
+            	        tb1.setText("★");
         	        } else {
             	        tb1.setSelected(false);
+            	        tb1.setText("☆");
         	        }
         	        
         	        String[] pron = dbm.getPronunciation(resultWord.getText());
@@ -383,14 +363,30 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
         	        detail.add(dp1);
         	        detail.add(dp2);
         	        
+        	        int wordFontSize = 40;
+        	        int defFontSize = 20;
+        	        if(word.getText().length() > 8) {
+        	        	wordFontSize = wordFontSize - ( 3 * word.getText().length() - 8);
+        	        }
+        	        if(def.getText().length() > 30) {
+        	        	defFontSize = defFontSize - ( 3 * def.getText().length() - 8);
+        	        }
+        	        
+        	        pronunciation1.setFont(new Font("", Font.PLAIN, 20));
+        	        pronunciation2.setFont(new Font("", Font.PLAIN, 20));
+        	        def.setFont(new Font("", Font.PLAIN, 20));
+        	        word.setFont(new Font("", Font.PLAIN, wordFontSize));
+        	        tb1.setFont(new Font("", Font.PLAIN, 50));
 
         	        tb1.addActionListener(_ ->{
         	        	if((tb1.isSelected())){
         	        		Favorite_word_manager.addNewFavWord(resultWord.getText(), def.getText());
-        	        		System.out.println("added new fav word");
+        	        		tb1.setText("★");
+//        	        		System.out.println("added new fav word");
         	        	} else {
         	        		Favorite_word_manager.removeFavWord(resultWord.getText(), def.getText());
-        	        		System.out.println("remove fav word");
+        	        		tb1.setText("☆");
+//        	        		System.out.println("remove fav word");
 
         	        	}
         	        	
@@ -492,7 +488,7 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
         	        detail.setVisible(true);
         	        detail.setLocationRelativeTo(this);
         	        
-        	        JToggleButton tb1 = new JToggleButton("like");
+        	        JToggleButton tb1 = new JToggleButton();
         	        JLabel word = new JLabel();
         	        word.setHorizontalAlignment(SwingConstants.CENTER);
         	        word.setVerticalAlignment(SwingConstants.CENTER);
@@ -507,8 +503,12 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
         	        
         	        if(Favorite_word_manager.checkFavWordExist(resultWord.getText(), definition[0])) {
             	        tb1.setSelected(true);
+            	        tb1.setText("★");
+
         	        } else {
             	        tb1.setSelected(false);
+            	        tb1.setText("☆");
+
         	        }
         	        
         	        String[] pron = dbm.getPronunciation(resultWord.getText());
@@ -550,9 +550,11 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
         	        tb1.addActionListener(_ ->{
         	        	if((tb1.isSelected())){
         	        		Favorite_word_manager.addNewFavWord(resultWord.getText(), def.getText());
+        	        		tb1.setText("★");
 //        	        		System.out.println("MyFrame: added new fav word");
         	        	} else {
         	        		Favorite_word_manager.removeFavWord(resultWord.getText(), def.getText());
+        	        		tb1.setText("☆");
 //        	        		System.out.println("MyFrame: remove fav word");
 
         	        	}

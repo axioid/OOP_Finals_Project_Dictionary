@@ -1,6 +1,8 @@
 quick|Có tốc độ, nhịp độ trên mức bình thường
 apple|quả táo
 cha|a male parent 
-mother|Người đàn bà có con, trong quan hệ với con cái
 bố|a male parent (Northern Vietnamese)
 fox|con cáo
+mother|Người đàn bà có con, trong quan hệ với con cái
+bu|a female parent (Northern Vietnamese)
+mẹ|a female parent
