@@ -20,6 +20,7 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
     JTextField tf1;
     JLabel l1, l2;
     JScrollPane scrollPane;
+    ImageIcon logo;
     int mode = 1; //1-> vieToEng    2-> engToVie
 
     Database_Manager dbm = new Database_Manager();
@@ -44,7 +45,9 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
         l1 = new JLabel("VIE");
         l2 = new JLabel("ENG");
         
+        logo = new ImageIcon("logoMain.png");
         
+        this.setIconImage(logo.getImage());
 
         this.setLayout(new BorderLayout(0, 0));
         p1.setLayout(new GridLayout(2, 1, 0, 0));
@@ -427,7 +430,7 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
          if(a == 0) {
          	JLabel noResult = new JLabel();
          	JPanel panel = new JPanel();
-         	noResult.setText("no result");
+         	noResult.setText("no favorite word");
              panel.add(noResult, BorderLayout.WEST);
          	p2.add(panel);
          	
@@ -486,6 +489,8 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
         	        detail.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         	        detail.setVisible(true);
         	        detail.setLocationRelativeTo(this);
+        	        detail.setResizable(false);
+        	        detail.setTitle("Word Details");
         	        
         	        JToggleButton tb1 = new JToggleButton();
         	        JLabel word = new JLabel();

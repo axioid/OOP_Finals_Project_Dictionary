@@ -2,7 +2,5 @@ quick|Có tốc độ, nhịp độ trên mức bình thường
 apple|quả táo
 cha|a male parent 
 bố|a male parent (Northern Vietnamese)
-fox|con cáo
 mother|Người đàn bà có con, trong quan hệ với con cái
-bu|a female parent (Northern Vietnamese)
-mẹ|a female parent
+chóng|happening or moving quickly or within a short time, especially in a smooth and easy way
