@@ -7,3 +7,4 @@ vulpine|giống cáo
 kitty|Con mèo
 fox|con cáo
 apple|quả táo
+cha|a male parent
