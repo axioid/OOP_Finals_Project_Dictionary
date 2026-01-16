@@ -20,7 +20,7 @@ public class Favorite_word_manager {
 	            try (BufferedWriter writer = new BufferedWriter(new FileWriter("fav_words.txt", true))) {
 	                writer.write(word +"|"+definition);
 	                writer.newLine();
-	                System.out.println("FWM: added: " + word + "|" + definition);
+//	                System.out.println("FWM: added: " + word + "|" + definition);
 	            }
 	        }
 	    } catch (IOException e) {
@@ -33,7 +33,7 @@ public class Favorite_word_manager {
 	        List<String> words = Files.readAllLines(Paths.get("fav_words.txt"));
 	        words.removeIf(w -> w.equalsIgnoreCase(word+"|"+def));
 	        Files.write(Paths.get("fav_words.txt"), words, StandardOpenOption.TRUNCATE_EXISTING);
-	        System.out.println("FWM: deleted: " + word );
+//	        System.out.println("FWM: deleted: " + word );
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }

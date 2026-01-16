@@ -114,11 +114,11 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
         this.setVisible(true);
         this.setAlwaysOnTop(false);
         
-        System.out.println("fav: " + b1.getSize());
-        System.out.println("src: " + b2.getSize());
-        System.out.println("change: " + b3.getSize());
-        System.out.println("vie: " + l1.getSize());
-        System.out.println("eng: " + l2.getSize());
+//        System.out.println("fav: " + b1.getSize());
+//        System.out.println("src: " + b2.getSize());
+//        System.out.println("change: " + b3.getSize());
+//        System.out.println("vie: " + l1.getSize());
+//        System.out.println("eng: " + l2.getSize());
 
 
 
@@ -295,13 +295,15 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 //        	    panel.addActionListener(this);
         	    
         	    panel.addActionListener(_ -> {
-        	        JFrame detail = new JFrame();
+        	        JDialog detail = new JDialog();
         	        detail.setSize(500,200);
         	        detail.setTitle("Word Details");
         	        detail.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         	        detail.setVisible(true);
         	        detail.setLocationRelativeTo(this);
         	        detail.setResizable(false);
+        	        detail.setAlwaysOnTop(true);
+//        	        detail.setUndecorated(true);
         	        
         	        JToggleButton tb1 = new JToggleButton();
         	        JLabel word = new JLabel();
@@ -484,13 +486,16 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
          	    panel.addActionListener(this);
 
         	    panel.addActionListener(_ -> {
-        	        JFrame detail = new JFrame();
+        	        JDialog detail = new JDialog();
         	        detail.setSize(500,200);
         	        detail.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         	        detail.setVisible(true);
         	        detail.setLocationRelativeTo(this);
         	        detail.setResizable(false);
         	        detail.setTitle("Word Details");
+        	        detail.setAlwaysOnTop(true);
+//        	        detail.setUndecorated(true);
+
         	        
         	        JToggleButton tb1 = new JToggleButton();
         	        JLabel word = new JLabel();

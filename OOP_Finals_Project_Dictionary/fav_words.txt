@@ -1,6 +1,9 @@
-apple|quả táo
 cha|a male parent 
 bố|a male parent (Northern Vietnamese)
 mother|Người đàn bà có con, trong quan hệ với con cái
 chóng|happening or moving quickly or within a short time, especially in a smooth and easy way
 quick|Có tốc độ, nhịp độ trên mức bình thường
+vulpine|giống cáo
+kitty|Con mèo
+fox|con cáo
+apple|quả táo

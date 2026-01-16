@@ -1,5 +1,6 @@
 package fullTest1;
-import static fullTest1.Favorite_word_manager.*;
+import static fullTest1.Favorite_word_manager.listFavWordAndDefinitions;
+import static fullTest1.Favorite_word_manager.separateWordAndDefinition;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -19,6 +20,7 @@ public class Test extends JFrame implements ActionListener, KeyListener {
     JTextField tf1;
     JLabel l1, l2;
     JScrollPane scrollPane;
+    ImageIcon logo;
     int mode = 1; //1-> vieToEng    2-> engToVie
 
     Database_Manager dbm = new Database_Manager();
@@ -28,19 +30,24 @@ public class Test extends JFrame implements ActionListener, KeyListener {
     JList<String> suggestionList = new JList<>(model);
 
     Test() throws SQLException {
+        
         p1 = new JPanel();
         p2 = new JPanel();
         sp1 = new JPanel();
         sp2 = new JPanel();
 
-        b1 = new JButton("fv");
-        b2 = new JButton("sr");
-        b3 = new JButton("->");
+        b1 = new JButton("📑");
+        b2 = new JButton("🔎");
+        b3 = new JButton("⮕");
 
         tf1 = new JTextField();
 
-        l1 = new JLabel("vie");
-        l2 = new JLabel("eng");
+        l1 = new JLabel("VIE");
+        l2 = new JLabel("ENG");
+        
+        logo = new ImageIcon("logoMain.png");
+        
+        this.setIconImage(logo.getImage());
 
         this.setLayout(new BorderLayout(0, 0));
         p1.setLayout(new GridLayout(2, 1, 0, 0));
@@ -72,8 +79,12 @@ public class Test extends JFrame implements ActionListener, KeyListener {
         l2.setHorizontalAlignment(JLabel.CENTER);
         tf1.setFont(new Font("", Font.PLAIN, 20));
 
-        l1.setFont(new Font("", Font.PLAIN, 25));
-        l2.setFont(new Font("", Font.PLAIN, 25));
+        l1.setFont(new Font("", Font.PLAIN, 40));
+        l2.setFont(new Font("", Font.PLAIN, 40));
+        b1.setFont(new Font("", Font.PLAIN, 16));
+        b2.setFont(new Font("", Font.PLAIN, 16));
+        b3.setFont(new Font("", Font.PLAIN, 40));
+
 
         sp1.add(b1);
         sp1.add(tf1);
@@ -102,46 +113,55 @@ public class Test extends JFrame implements ActionListener, KeyListener {
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.setAlwaysOnTop(false);
-
         
+        System.out.println("fav: " + b1.getSize());
+        System.out.println("src: " + b2.getSize());
+        System.out.println("change: " + b3.getSize());
+        System.out.println("vie: " + l1.getSize());
+        System.out.println("eng: " + l2.getSize());
 
+
+
+        //finish basics
+
+        //autocomplete suggestions
         popup.setFocusable(false);
-        suggestionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        suggestionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); //select 1 item at a time
         JScrollPane suggestionScroll = new JScrollPane(suggestionList);
         suggestionScroll.setBorder(null);
         popup.add(suggestionScroll);
 
  
-        suggestionList.addMouseListener(new MouseAdapter() {
+        suggestionList.addMouseListener(new MouseAdapter() { //set up directly
             @Override
             public void mouseClicked(MouseEvent e) {
                 String selected = suggestionList.getSelectedValue();
                 if (selected != null) {
-                    tf1.setText(selected);
-                    popup.setVisible(false);
-                    button2(); 
+                    tf1.setText(selected); //set textfield to selected text
+                    popup.setVisible(false); //hide suggestion
+                    button2();  //search
                 }
             }
         });
 
         tf1.getDocument().addDocumentListener(new DocumentListener() {
             private void updatePopup() {
-                model.clear();
+                model.clear(); //when tf1's content changes, the suggestion list is refreshed
                 String input = tf1.getText().toLowerCase();
-                String normalizedInput = removeAccents(input);
+                String normalizedInput = removeAccents(input); //turn inputed words to plain, accent-less words (mẹ -> me)
 
                 if (input.isEmpty()) {
                     popup.setVisible(false);
-                    return;
+                    return; //is tf1 is empty, hide pop-up
                 }
 
                 try {
-                    String[] dictionary = dbm.listAllWord(mode); 
+                    String[] dictionary = dbm.listAllWord(mode);  //list all words available in searching language
                     for (String word : dictionary) {
-                        String normalizedWord = removeAccents(word.toLowerCase());
+                        String normalizedWord = removeAccents(word.toLowerCase()); //db words might be capped and/or have accents -> remove accents
  
-                        if (normalizedWord.startsWith(normalizedInput)) {
-                            model.addElement(word);
+                        if (normalizedWord.startsWith(normalizedInput)) { //if the accent-less db word list's word starts with or is the accent-less input
+                            model.addElement(word); //add the word to the suggestion list
                         }
                     }
                 } catch (Exception ex) {
@@ -149,39 +169,46 @@ public class Test extends JFrame implements ActionListener, KeyListener {
                 }
 
                 if (!model.isEmpty()) {
-                    suggestionList.setVisibleRowCount(Math.min(model.size(), 5));
-                    popup.show(tf1, 0, tf1.getHeight());
+                    suggestionList.setVisibleRowCount(Math.min(model.size(), 5)); //limit the visible length of the list, if not, the pop up would be as long as the suggestion list
+                    popup.show(tf1, 0, tf1.getHeight()); //display at tf1, shifted x by 0 and y by exactly the height of tf1 -> just below tf1
                 } else {
                     popup.setVisible(false);
                 }
             }
 
-            @Override public void insertUpdate(DocumentEvent e) { updatePopup(); }
-            @Override public void removeUpdate(DocumentEvent e) { updatePopup(); }
-            @Override public void changedUpdate(DocumentEvent e) { updatePopup(); }
+            @Override public void insertUpdate(DocumentEvent e) { updatePopup(); } //update the pop up when a character is typed  (insert)
+            @Override public void removeUpdate(DocumentEvent e) { updatePopup(); } //update the pop up when a character is removed
+            @Override public void changedUpdate(DocumentEvent e) { updatePopup(); } //update the pop up when any change happened
         });
     }
 
 
     public static String removeAccents(String input) {
-        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
-        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-        return pattern.matcher(normalized).replaceAll("");
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD); //NFD: Normalization Form Decomposition ToT -> decompose input into its base components (letters, accents, other marks, etc). ex: ố -> o + ^ + '    
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");  //set all the accent marks in input into a regex
+        return pattern.matcher(normalized).replaceAll(""); //remove all accent marks in input
     }
     
-    public void button3() {
-    	if (l1.getText().equals("vie")) {
+    //Pattern.complie to make regex
+    //"\\p{InCombiningDiacriticalMarks" to choose only accent marks
+    
+    public void button3() { //change translation mode (eng to vie/ vie to eng) 
+    	if (l1.getText().equals("VIE")) {
             mode = 2;
-            l1.setText("eng");
-            l2.setText("vie");
-        } else if (l1.getText().equals("eng")) {
+            l1.setText("ENG");
+            l2.setText("VIE");
+            l1.setFont(new Font("", Font.PLAIN, 40));
+            l2.setFont(new Font("", Font.PLAIN, 40));
+        } else if (l1.getText().equals("ENG")) {
             mode = 1;
-            l1.setText("vie");
-            l2.setText("eng");
+            l1.setText("VIE");
+            l2.setText("ENG");
+            l1.setFont(new Font("", Font.PLAIN, 40));
+            l2.setFont(new Font("", Font.PLAIN, 40));
         }
     }
     
-    public void button2() {
+    public void button2() { //search button
     	String[] words = null;
         int a = 0;
     	
@@ -200,7 +227,7 @@ public class Test extends JFrame implements ActionListener, KeyListener {
  	
         p2.removeAll();
         
-        if(a == 0) {
+        if(a == 0) { //if the list is empty, don't show the list but show "no result" label
         	JLabel noResult = new JLabel();
         	JPanel panel = new JPanel();
         	noResult.setText("no result");
@@ -221,10 +248,10 @@ public class Test extends JFrame implements ActionListener, KeyListener {
         	    String engWord = null;
         	    String vieWord = null;
 
-        	    if (mode ==1) {
+        	    if (mode ==1) { //vie to eng
         	        vieWord =tf1.getText().toLowerCase().trim();	//set vie or eng word
         	        engWord =words[i-1];
-        	    } else if (mode == 2) {
+        	    } else if (mode == 2) { //eng to vie
         	        engWord =tf1.getText().toLowerCase().trim();
         	        vieWord =words[i-1];
         	    }
@@ -258,7 +285,7 @@ public class Test extends JFrame implements ActionListener, KeyListener {
         	    panel.setPreferredSize(new Dimension(300, 70));
         	    panel.setMaximumSize(new Dimension(300, 70));
         	    panel.setMinimumSize(new Dimension(300, 70));
-        	    panel.setBackground(i % 2 ==0 ? Color.LIGHT_GRAY : Color.WHITE);
+        	    panel.setBackground(i % 2 ==0 ? Color.LIGHT_GRAY : Color.WHITE); //switch between light gray and white for the result panels
 
         	    panel.setAlignmentX(Component.CENTER_ALIGNMENT);
         	    
@@ -268,15 +295,22 @@ public class Test extends JFrame implements ActionListener, KeyListener {
 //        	    panel.addActionListener(this);
         	    
         	    panel.addActionListener(_ -> {
-        	        JFrame detail = new JFrame();
+        	        JDialog detail = new JDialog();
         	        detail.setSize(500,200);
+        	        detail.setTitle("Word Details");
         	        detail.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         	        detail.setVisible(true);
-        	        detail.setLocationRelativeTo(null);
+        	        detail.setLocationRelativeTo(this);
+        	        detail.setResizable(false);
+        	        detail.setAlwaysOnTop(true);
+//        	        detail.setUndecorated(true);
         	        
-        	        JToggleButton tb1 = new JToggleButton("like");
+        	        JToggleButton tb1 = new JToggleButton();
         	        JLabel word = new JLabel();
+        	        word.setHorizontalAlignment(SwingConstants.CENTER);
+        	        word.setVerticalAlignment(SwingConstants.CENTER);
         	        JLabel def = new JLabel();
+
         	        JLabel pronunciation1 = new JLabel();
         	        JLabel pronunciation2 = new JLabel();
         	        
@@ -286,16 +320,34 @@ public class Test extends JFrame implements ActionListener, KeyListener {
         	        dsp1 = new JPanel();
         	        
         	        tb1.setFocusable(false);
+        	        tb1.setFont(new Font("", Font.PLAIN, 50));
         	        
         	        if(Favorite_word_manager.checkFavWordExist(resultWord.getText(), definition[0])) {
             	        tb1.setSelected(true);
+            	        tb1.setText("★");
         	        } else {
             	        tb1.setSelected(false);
+            	        tb1.setText("☆");
         	        }
         	        
         	        String[] pron = dbm.getPronunciation(resultWord.getText());
         	        pronunciation1.setText(pron[0]);
         	        pronunciation2.setText(pron[1]);
+        	        
+        	        
+        	        word.setOpaque(true);
+        	        pronunciation1.setOpaque(true);
+        	        pronunciation2.setOpaque(true);
+        	        
+        	        word.setBackground(Color.white);
+        	        pronunciation1.setBackground(Color.LIGHT_GRAY);
+        	        dp2.setBackground(Color.LIGHT_GRAY);
+
+        	        if (pronunciation2.getText().isEmpty()){
+            	        pronunciation2.setBackground(Color.LIGHT_GRAY);
+        	        }else {
+        	        	pronunciation2.setBackground(Color.gray);
+        	        }
         	        
 //        	        tb1.setSelected(false);
         	        word.setText(resultWord.getText());
@@ -316,14 +368,29 @@ public class Test extends JFrame implements ActionListener, KeyListener {
         	        detail.add(dp1);
         	        detail.add(dp2);
         	        
+        	        int wordLength = word.getText().length();
+        	        int defLength = def.getText().length();
+
+        	        int wordFontSize = Math.max(20, 40 - (wordLength - 8)); // shrink slowly, min 20
+        	        int defFontSize  = Math.max(12, 20 - (defLength - 30)/5); // shrink slowly, min 12
+
+
+        	        
+        	        pronunciation1.setFont(new Font("", Font.PLAIN, 20));
+        	        pronunciation2.setFont(new Font("", Font.PLAIN, 20));
+        	        def.setFont(new Font("", Font.PLAIN, defFontSize));
+        	        word.setFont(new Font("", Font.PLAIN, wordFontSize));
+        	        tb1.setFont(new Font("", Font.PLAIN, 50));
 
         	        tb1.addActionListener(_ ->{
         	        	if((tb1.isSelected())){
         	        		Favorite_word_manager.addNewFavWord(resultWord.getText(), def.getText());
-        	        		System.out.println("added new fav word");
+        	        		tb1.setText("★");
+//        	        		System.out.println("added new fav word");
         	        	} else {
         	        		Favorite_word_manager.removeFavWord(resultWord.getText(), def.getText());
-        	        		System.out.println("remove fav word");
+        	        		tb1.setText("☆");
+//        	        		System.out.println("remove fav word");
 
         	        	}
         	        	
@@ -340,8 +407,7 @@ public class Test extends JFrame implements ActionListener, KeyListener {
         p2.repaint();
     }
     
-    public void button1() {
-    	
+    public void button1() { //favorite words button
     	List<String> wordsList = new ArrayList<>();
 		List<String> definitionsList = new ArrayList<>();
 		String[] n = listFavWordAndDefinitions();
@@ -366,7 +432,7 @@ public class Test extends JFrame implements ActionListener, KeyListener {
          if(a == 0) {
          	JLabel noResult = new JLabel();
          	JPanel panel = new JPanel();
-         	noResult.setText("no result");
+         	noResult.setText("no favorite word");
              panel.add(noResult, BorderLayout.WEST);
          	p2.add(panel);
          	
@@ -420,14 +486,21 @@ public class Test extends JFrame implements ActionListener, KeyListener {
          	    panel.addActionListener(this);
 
         	    panel.addActionListener(_ -> {
-        	        JFrame detail = new JFrame();
+        	        JDialog detail = new JDialog();
         	        detail.setSize(500,200);
         	        detail.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         	        detail.setVisible(true);
-        	        detail.setLocationRelativeTo(null);
+        	        detail.setLocationRelativeTo(this);
+        	        detail.setResizable(false);
+        	        detail.setTitle("Word Details");
+        	        detail.setAlwaysOnTop(true);
+//        	        detail.setUndecorated(true);
+
         	        
-        	        JToggleButton tb1 = new JToggleButton("like");
+        	        JToggleButton tb1 = new JToggleButton();
         	        JLabel word = new JLabel();
+        	        word.setHorizontalAlignment(SwingConstants.CENTER);
+        	        word.setVerticalAlignment(SwingConstants.CENTER);
         	        JLabel def = new JLabel();
         	        JLabel pronunciation1 = new JLabel();
         	        JLabel pronunciation2 = new JLabel();
@@ -439,13 +512,32 @@ public class Test extends JFrame implements ActionListener, KeyListener {
         	        
         	        if(Favorite_word_manager.checkFavWordExist(resultWord.getText(), definition[0])) {
             	        tb1.setSelected(true);
+            	        tb1.setText("★");
+
         	        } else {
             	        tb1.setSelected(false);
+            	        tb1.setText("☆");
+
         	        }
         	        
         	        String[] pron = dbm.getPronunciation(resultWord.getText());
         	        pronunciation1.setText(pron[0]);
         	        pronunciation2.setText(pron[1]);
+        	        
+        	        word.setOpaque(true);
+        	        pronunciation1.setOpaque(true);
+        	        pronunciation2.setOpaque(true);
+        	        
+        	        word.setBackground(Color.white);
+        	        pronunciation1.setBackground(Color.LIGHT_GRAY);
+        	        dp2.setBackground(Color.LIGHT_GRAY);
+
+        	        if (pronunciation2.getText().isEmpty()){
+            	        pronunciation2.setBackground(Color.LIGHT_GRAY);
+        	        }else {
+        	        	pronunciation2.setBackground(Color.gray);
+        	        }
+        	        
         	        tb1.setFocusable(false);
         	        
         	        tb1.setSelected(true);
@@ -464,13 +556,30 @@ public class Test extends JFrame implements ActionListener, KeyListener {
         	        detail.add(dp1);
         	        detail.add(dp2);
         	        
+        	        
+        	        int wordLength = word.getText().length();
+        	        int defLength = def.getText().length();
+
+        	        int wordFontSize = Math.max(20, 40 - (wordLength - 8)); // shrink slowly, min 20
+        	        int defFontSize  = Math.max(12, 20 - (defLength - 30)/5); // shrink gently, min 12
+
+
+        	        
+        	        pronunciation1.setFont(new Font("", Font.PLAIN, 20));
+        	        pronunciation2.setFont(new Font("", Font.PLAIN, 20));
+        	        def.setFont(new Font("", Font.PLAIN, defFontSize));
+        	        word.setFont(new Font("", Font.PLAIN, wordFontSize));
+        	        tb1.setFont(new Font("", Font.PLAIN, 50));
+        	        
         	        tb1.addActionListener(_ ->{
         	        	if((tb1.isSelected())){
         	        		Favorite_word_manager.addNewFavWord(resultWord.getText(), def.getText());
-        	        		System.out.println("MyFrame: added new fav word");
+        	        		tb1.setText("★");
+//        	        		System.out.println("MyFrame: added new fav word");
         	        	} else {
         	        		Favorite_word_manager.removeFavWord(resultWord.getText(), def.getText());
-        	        		System.out.println("MyFrame: remove fav word");
+        	        		tb1.setText("☆");
+//        	        		System.out.println("MyFrame: remove fav word");
 
         	        	}
         	        	
@@ -520,8 +629,8 @@ public class Test extends JFrame implements ActionListener, KeyListener {
 		// TODO Auto-generated method stub
 		
 	}
-	
 	public static void main(String[] args) throws SQLException{
-		System.out.print("U+1F1FB" + "U+1F1F3");
+		new Test();
 	}
+	
 }
