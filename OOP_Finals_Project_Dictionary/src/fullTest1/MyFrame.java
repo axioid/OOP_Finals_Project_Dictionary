@@ -547,6 +547,22 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
         	        detail.add(dp1);
         	        detail.add(dp2);
         	        
+        	        
+        	        int wordFontSize = 40;
+        	        int defFontSize = 20;
+        	        if(word.getText().length() > 8) {
+        	        	wordFontSize = wordFontSize - ( 3 * word.getText().length() - 8);
+        	        }
+        	        if(def.getText().length() > 30) {
+        	        	defFontSize = defFontSize - ( 3 * def.getText().length() - 8);
+        	        }
+        	        
+        	        pronunciation1.setFont(new Font("", Font.PLAIN, 20));
+        	        pronunciation2.setFont(new Font("", Font.PLAIN, 20));
+        	        def.setFont(new Font("", Font.PLAIN, 20));
+        	        word.setFont(new Font("", Font.PLAIN, wordFontSize));
+        	        tb1.setFont(new Font("", Font.PLAIN, 50));
+        	        
         	        tb1.addActionListener(_ ->{
         	        	if((tb1.isSelected())){
         	        		Favorite_word_manager.addNewFavWord(resultWord.getText(), def.getText());
